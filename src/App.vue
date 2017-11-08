@@ -12,7 +12,7 @@
         :title="composition.title"
         :items="composition.items">
       </sp-composition>
-      <sp-button class="is-warning is-pulled-right" icon="fa-plus"></sp-button>
+      <sp-button class="is-warning is-pulled-right" icon="fa-plus">Incluir</sp-button>
     </section>
   </div>
 </template>

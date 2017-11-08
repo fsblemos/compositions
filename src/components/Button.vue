@@ -3,6 +3,9 @@
     <span class="icon is-small">
       <i class="fa" :class="[icon]"></i>
     </span>
+    <span v-if="$slots.default">
+      <slot></slot>
+    </span>
   </a>
 </template>
 

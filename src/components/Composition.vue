@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     getActions(row) {
-      const defaultActions = ['edit', 'insert'];
+      const defaultActions = ['insert', 'edit'];
       return row.children ? [...defaultActions, 'remove'] : defaultActions;
     },
   },
