@@ -6,21 +6,22 @@
       </div>
     </td>
     <td class="has-text-right">
-      <simplus-table-action
+      <sp-table-action
         v-for="action in actions"
         :key="action"
         :type="action">
-      </simplus-table-action>
+      </sp-table-action>
     </td>
   </tr>
 </template>
 
 <script>
-import SimplusTableAction from './TableAction';
+import SpTableAction from './TableAction';
 
 export default {
+  name: 'SpTableRow',
   components: {
-    SimplusTableAction,
+    SpTableAction,
   },
   props: {
     row: Object,
@@ -30,10 +31,11 @@ export default {
       default: 0,
     },
   },
-  computed: {
-    isParent() {
-      return this.row.children && this.row.children.lenght;
-    },
-  },
 };
 </script>
+
+<style lang="scss" scoped>
+tr {
+  cursor: pointer;
+}
+</style>

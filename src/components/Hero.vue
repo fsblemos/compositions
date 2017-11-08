@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'SimplusHero',
+  name: 'SpHero',
   props: {
     title: String,
     subtitle: String,
@@ -23,7 +23,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@/themes/variables';
 
 .hero {

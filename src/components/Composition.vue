@@ -1,28 +1,28 @@
 <template>
-  <simplus-panel :title="title">
-    <simplus-table :columns="columns" :rows="flattedItems">
+  <sp-panel :title="title">
+    <sp-table :columns="columns" :rows="flattedItems">
       <template slot-scope="props">
-        <simplus-table-row
+        <sp-table-row
           :row="props.row"
           :level="props.row.level"
           :actions="getActions(props.row)">
-        </simplus-table-row>
+        </sp-table-row>
       </template>
-    </simplus-table>
-  </simplus-panel>
+    </sp-table>
+  </sp-panel>
 </template>
 
 <script>
-import SimplusPanel from '../components/Panel';
-import SimplusTable from '../components/Table';
-import SimplusTableRow from '../components/TableRow';
+import SpPanel from '../components/Panel';
+import SpTable from '../components/Table';
+import SpTableRow from '../components/TableRow';
 
 export default {
-  name: 'Composition',
+  name: 'SpComposition',
   components: {
-    SimplusPanel,
-    SimplusTable,
-    SimplusTableRow,
+    SpPanel,
+    SpTable,
+    SpTableRow,
   },
   props: {
     title: String,
@@ -39,11 +39,10 @@ export default {
   },
   computed: {
     flattedItems() {
-      const flatten = (items, level) =>
-        items.reduce((prev, cur) => {
-          const item = prev.concat({ ...cur, level });
-          return cur.children ? [...prev, ...item, ...flatten(cur.children, level + 1)] : item;
-        }, []);
+      const flatten = (items, level) => items.reduce((prev, cur) => {
+        const item = prev.concat({ ...cur, level });
+        return cur.children ? [...prev, ...item, ...flatten(cur.children, level + 1)] : item;
+      }, []);
 
       return flatten(this.items, 0);
     },
@@ -51,7 +50,6 @@ export default {
   methods: {
     getActions(row) {
       const defaultActions = ['edit', 'insert'];
-
       return row.children ? [...defaultActions, 'remove'] : defaultActions;
     },
   },

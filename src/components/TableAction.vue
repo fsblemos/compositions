@@ -1,13 +1,13 @@
 <template>
-  <simplus-button
+  <sp-button
     class="table-action is-small"
     :class="[`is-${currentType.color}`]"
     :icon="currentType.icon">
-  </simplus-button>
+  </sp-button>
 </template>
 
 <script>
-import SimplusButton from './Button';
+import SpButton from './Button';
 
 const Types = [
   { key: 'insert', icon: 'fa-link', color: 'warning' },
@@ -16,9 +16,9 @@ const Types = [
 ];
 
 export default {
-  name: 'TableAction',
+  name: 'SpTableAction',
   components: {
-    SimplusButton,
+    SpButton,
   },
   props: {
     type: {
@@ -36,7 +36,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .table-action {
   &:not(:last-child) {
     margin-right: .25em;

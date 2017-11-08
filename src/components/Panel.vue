@@ -9,13 +9,14 @@
 
 <script>
 export default {
+  name: 'SpPanel',
   props: {
     title: String,
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@/themes/variables';
 
 .panel {

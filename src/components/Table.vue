@@ -13,14 +13,14 @@
 </template>
 
 <script>
-import SimplusTableAction from './TableAction';
-import SimplusTableRow from './TableRow';
+import SpTableAction from './TableAction';
+import SpTableRow from './TableRow';
 
 export default {
-  name: 'SimplusTable',
+  name: 'SpTable',
   components: {
-    SimplusTableAction,
-    SimplusTableRow,
+    SpTableAction,
+    SpTableRow,
   },
   props: {
     columns: Array,

@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name:'SimplusButton',
+  name:'SpButton',
   props: {
     icon: String,
   },

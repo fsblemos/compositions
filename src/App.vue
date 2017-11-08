@@ -1,37 +1,36 @@
 <template>
   <div id="app">
-    <simplus-hero
+    <sp-hero
       class="is-primary"
       title="Simplus"
       subtitle="Cadastro de produtos">
-    </simplus-hero>
+    </sp-hero>
     <section class="section">
-      <composition
-        v-for="composition in compositions"
-        :key="composition.id"
+      <sp-composition
+        v-for="(composition, index) in compositions"
+        :key="index"
         :title="composition.title"
         :items="composition.items">
-      </composition>
-      <simplus-button class="is-warning is-pulled-right" icon="fa-plus"></simplus-button>
+      </sp-composition>
+      <sp-button class="is-warning is-pulled-right" icon="fa-plus"></sp-button>
     </section>
   </div>
 </template>
 
 <script>
-import SimplusHero from './components/Hero';
-import SimplusButton from './components/Button';
-import Composition from './views/Composition';
+import SpHero from './components/Hero';
+import SpButton from './components/Button';
+import SpComposition from './components/Composition';
 
 export default {
   components: {
-    SimplusHero,
-    SimplusButton,
-    Composition,
+    SpHero,
+    SpButton,
+    SpComposition,
   },
   data() {
     return {
       compositions: [{
-        id: 1,
         title: 'Composição logística 1',
         items: [{
           gtin: '111222333444555',
@@ -49,9 +48,8 @@ export default {
               ]
             },
           ],
-        },
-      ]}, {
-        id: 2,
+        }],
+      }, {
         title: 'Composição logística 2',
         items: [
           { gtin: '111222333444555', unit: 'CAIXA', amount: 1 },
