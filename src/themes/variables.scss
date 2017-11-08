@@ -1,0 +1,10 @@
+@import '../../node_modules/bulma/sass/utilities/initial-variables';
+
+$primary: #c0392b;
+$warning: #FBC02D;
+$danger: #E53935;
+
+$primary-invert: $white;
+$body-background-color: #f2f2f2;
+
+@import '../../node_modules/bulma/sass/utilities/derived-variables';
