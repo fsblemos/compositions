@@ -33,18 +33,18 @@ export default {
       compositions: [{
         title: 'Composição logística 1',
         items: [{
-          gtin: '111222333444555',
-          unit: 'CAIXA',
+          dun: '111222333444555',
+          pack: 'CAIXA',
           amount: 1,
           children: [
-            { gtin: '12345678', unit: 'PACK', amount: 1 },
+            { dun: '12345678', pack: 'PACK', amount: 1 },
             {
-              gtin: '789607130086',
-              unit: 'UNIDADE',
+              dun: '789607130086',
+              pack: 'UNIDADE',
               amount: 1,
               children: [
-                { gtin: '789607130086', unit: 'UNIDADE', amount: 1 },
-                { gtin: '789607130086', unit: 'UNIDADE', amount: 1 },
+                { dun: '789607130086', pack: 'UNIDADE', amount: 1 },
+                { dun: '789607130086', pack: 'UNIDADE', amount: 1 },
               ]
             },
           ],
@@ -52,9 +52,9 @@ export default {
       }, {
         title: 'Composição logística 2',
         items: [
-          { gtin: '111222333444555', unit: 'CAIXA', amount: 1 },
-          { gtin: '12345678', unit: 'PACK', amount: 1 },
-          { gtin: '789607130086', unit: 'UNIDADE', amount: 1 },
+          { dun: '111222333444555', pack: 'CAIXA', amount: 1 },
+          { dun: '12345678', pack: 'PACK', amount: 1 },
+          { dun: '789607130086', pack: 'UNIDADE', amount: 1 },
         ]
       }],
     };

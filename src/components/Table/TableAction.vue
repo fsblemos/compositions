@@ -2,12 +2,13 @@
   <sp-button
     class="table-action is-small"
     :class="[`is-${currentType.color}`]"
-    :icon="currentType.icon">
+    :icon="currentType.icon"
+    @click="$emit('click', currentType.key)">
   </sp-button>
 </template>
 
 <script>
-import SpButton from './Button';
+import SpButton from '../Button';
 
 const Types = [
   { key: 'insert', icon: 'fa-link', color: 'warning' },

@@ -8,6 +8,7 @@
     <td class="has-text-right">
       <sp-table-action
         v-for="action in actions"
+        @click="action => $emit('action', action, row)"
         :key="action"
         :type="action">
       </sp-table-action>
@@ -33,9 +34,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-tr {
-  cursor: pointer;
-}
-</style>
