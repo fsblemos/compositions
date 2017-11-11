@@ -1,7 +1,7 @@
 <template>
   <div class="field" :class="{ 'is-horizontal': !!title }">
     <div class="field-label is-small" v-if="title">
-      <label class="label">{{ title }}</label>
+      <label class="label" :class="{ 'is-required': required }">{{ title }}</label>
     </div>
     <div class="field-body">
       <slot>
@@ -15,6 +15,22 @@ export default {
   name: 'SpField',
   props: {
     title: String,
+    required: Boolean,
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.label {
+  position: relative;
+
+  &.is-required {
+    &::after {
+      content: '*';
+      color: red;
+      position: absolute;
+      right: -10px;
+    }
+  }
+}
+</style>

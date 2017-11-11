@@ -22,6 +22,10 @@ export default new Vuex.Store({
   state: {
     compositions: [],
     counter: 0,
+    requiredFields: [
+      'dun', 'pack', 'amount', 'height', 'width', 'depth', 'grossWeight', 'netWeight',
+      'heightUnit', 'widthUnit', 'depthUnit', 'grossWeightUnit', 'netWeightUnit'
+    ],
   },
   mutations: {
     increment(state, amount = 1) {
@@ -51,6 +55,12 @@ export default new Vuex.Store({
     setItem(state, { index, item }) {
       const composition = state.compositions[index];
       const currentItem = composition.items.find(i => i.dun === item.dun);
+
+      if (state.requiredFields.some(field => !parent[field])) {
+        throw new Error('Todos os campos são obrigatórios');
+      } else if (composition.items.find(i => i.dun === parent.dun)) {
+        throw new Error('Já existe item com este ID');
+      }
 
       composition.items.splice(composition.items.indexOf(currentItem), 1, item);
     },
@@ -84,7 +94,9 @@ export default new Vuex.Store({
     addParentItem(state, { index, item, parent }) {
       const composition = state.compositions[index];
 
-      if (composition.items.find(i => i.dun === parent.dun)) {
+      if (state.requiredFields.some(field => !parent[field])) {
+        throw new Error('Todos os campos são obrigatórios');
+      } else if (composition.items.find(i => i.dun === parent.dun)) {
         throw new Error('Já existe item com este ID');
       }
 
@@ -113,6 +125,8 @@ export default new Vuex.Store({
     },
   },
   getters: {
+    isRequired: (state) => (field) => state.requiredFields.includes(field),
+
     items: (state) => (index) =>
       state.compositions[index].items.sort((a, b) => {
         if (!a.parent && b.parent) {

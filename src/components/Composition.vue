@@ -11,12 +11,12 @@
       </template>
     </sp-table>
     <sp-modal ref="modal" title="Dados logísticos">
-      <sp-input title="Código DUN" v-model="form.dun" type="number"></sp-input>
-      <sp-select title="Un. Embalagem" :options="packaging" v-model="form.pack"></sp-select>
-      <sp-input title="Quantidade" type="number" v-model="form.amount"></sp-input>
-      <sp-field v-for="measure in measures" :key="measure.key" :title="measure.title">
+      <sp-input title="Código DUN" v-model="form.dun" type="number" :required="isRequired('dun')"></sp-input>
+      <sp-select title="Un. Embalagem" :options="packaging" v-model="form.pack" :required="isRequired('pack')"></sp-select>
+      <sp-input title="Quantidade" type="number" v-model="form.amount" :required="isRequired('amount')"></sp-input>
+      <sp-field v-for="measure in measures" :key="measure.key" :title="measure.title" :required="isRequired(measure.key)">
         <sp-input type="number" v-model="form[measure.key]"></sp-input>
-        <sp-select :options="units" v-model="form[measure.keyUnit]"></sp-select>
+        <sp-select :options="units" v-model="form[measure.keyUnit]" :first-default="true"></sp-select>
       </sp-field>
       <template slot="footer">
         <sp-button @click="$refs.modal.close()">Cancelar</sp-button>
@@ -70,6 +70,7 @@ export default {
   },
   data() {
     return {
+      edit: false,
       actions: [
         { key: 'insert', onClick: this.onInsert },
         { key: 'edit', onClick: this.onEdit },
@@ -102,6 +103,9 @@ export default {
     }
   },
   computed: {
+    isRequired() {
+      return this.$store.getters.isRequired;
+    },
     flattedItems() {
       return this.$store.getters.items(this.id);
     },
@@ -134,15 +138,19 @@ export default {
 
       try {
         await fakeAjax(dun);
-        global.alert('Registro removido com sucesso!');
+        window.alert('Registro removido com sucesso!');
       } catch (err) {
-        global.alert(`${err} - Exemplo de erro ao remover produto, tente novamente.`);
+        window.alert(`${err} - Exemplo de erro ao remover produto, tente novamente.`);
       }
     },
     save(form) {
       if (this.edit) {
-        this.$store.commit('setItem', { index: this.id, item: form });
-        this.$refs.modal.close();
+        try {
+          this.$store.commit('setItem', { index: this.id, item: form });
+          this.$refs.modal.close();
+        } catch (e) {
+          window.alert(e);
+        }
       } else {
         try {
           this.$store.commit('addParentItem', {
@@ -152,8 +160,8 @@ export default {
           });
 
           fakeAjax(form)
-            .then(() => global.alert('Registro salvo com sucesso!'))
-            .catch(err => global.alert(`${err} - Exemplo de erro ao salvar produto, tente novamente.`))
+            .then(() => window.alert('Registro salvo com sucesso!'))
+            .catch(err => window.alert(`${err} - Exemplo de erro ao salvar produto, tente novamente.`))
             .then(this.$refs.modal.close);
         } catch (e) {
           window.alert(e);
