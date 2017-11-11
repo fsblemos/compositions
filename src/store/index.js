@@ -1,52 +1,67 @@
 import Vuex from 'vuex';
 import Vue from 'vue';
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
+const flatten = (items, level = 0, parent = null) =>
+  items.reduce((prev, cur) => {
+    const child = { ...cur, level, parent };
+
+    if (child.children) {
+      delete child.children
+    }
+
+    return cur.children
+      ? [...prev, child, ...flatten(cur.children, level + 1, cur.dun)]
+      : prev.concat(child);
+    }, []);
+
 export default new Vuex.Store({
+  plugins: [createPersistedState()],
   state: {
-    compositions: [{
-      title: 'Composição logística 1',
-      items: [{
-        dun: '111222333444555',
-        pack: 'CAIXA',
-        amount: 1,
-        children: [
-          { dun: '12345678', pack: 'PACK', amount: 1 },
-          {
-            dun: '789607130086',
-            pack: 'UNIDADE',
-            amount: 1,
-            children: [
-              { dun: '789607130086123', pack: 'UNIDADE', amount: 1 },
-              { dun: '78960713008645', pack: 'UNIDADE', amount: 1 },
-            ]
-          },
-        ],
-      }],
-    }, {
-      title: 'Composição logística 2',
-      items: [
-        { dun: '111222333444555123', pack: 'CAIXA', amount: 1 },
-        { dun: '12345678123', pack: 'PACK', amount: 1 },
-        { dun: '78960713008612312', pack: 'UNIDADE', amount: 1 },
-      ]
-    }],
+    compositions: [],
+    counter: 0,
   },
   mutations: {
+    increment(state, amount = 1) {
+      state.counter++;
+    },
     addComposition(state, composition) {
-      state.compositions.push(composition);
+      if (!composition.items || !composition.items.length) {
+        composition.items = [{ dun: null, pack: null, amount: null, parent: null }];
+      }
+
+      state.compositions.push({ ...composition, items: flatten(composition.items)});
+
+      this.commit('increment');
+    },
+    addCompositions(state, compositions) {
+      compositions.forEach(composition => {
+        this.commit('addComposition', composition);
+      });
     },
     setItem(state, { index, item }) {
-      const items = this.getters.flattedItems(index);
-      const currentItem = items.find(i => i.dun === item.dun);
+      const composition = state.compositions[index];
+      const currentItem = composition.items.find(i => i.dun === item.dun);
 
-      if (currentItem) {
-        Object.keys(item).forEach((key) => {
-          currentItem[key] = item[key];
+      composition.items.splice(composition.items.indexOf(currentItem), 1, item);
+    },
+    removeItem(state, { index, dun }) {
+      const composition = state.compositions[index];
+      const remove = (dun) => {
+        composition.items.forEach(item => {
+          if ((item.parent && item.parent === dun) || item.dun === dun) {
+            composition.items.splice(composition.items.indexOf(item), 1);
+            remove(item.dun);
+          }
         });
-      } else {
-        this.commit('addItem', { index, item });
+      };
+
+      remove(dun);
+
+      if (!composition.items.length) {
+        state.compositions.splice(index, 1);
       }
     },
     addItem(state, { index, item }) {
@@ -60,15 +75,48 @@ export default new Vuex.Store({
         composition.items.push(item);
       }
     },
+    addParentItem(state, { index, item, parent }) {
+      const composition = state.compositions[index];
+
+      if (composition.items.find(i => i.dun === parent.dun)) {
+        throw new Error('Já existe item com este ID');
+      }
+
+      const currentItem = composition.items.find(i => i.dun === item.dun);
+      const currentParent = composition.items.find(i => i.dun === item.parent);
+
+      const updateLevel = (parent) => {
+        composition.items.forEach(item => {
+          if (item.parent === parent) {
+            item.level = (item.level || 0) + 1;
+            updateLevel(item.dun);
+          }
+        });
+      };
+
+      if (currentParent && currentParent.dun) {
+        parent.parent = currentParent.dun;
+        parent.level = (currentParent.level || 0) + 1;
+      }
+
+      this.commit('addItem', { index, item: parent });
+
+      currentItem.parent = parent.dun;
+
+      updateLevel(parent.dun);
+    },
   },
   getters: {
-    flattedItems: (state) => (index) => {
-      const flatten = (items, level) => items.reduce((prev, cur) => {
-        const item = prev.concat({ ...cur, level });
-        return cur.children ? [...prev, ...item, ...flatten(cur.children, level + 1)] : item;
-      }, []);
-
-      return flatten(state.compositions[index].items, 0);
+    items: (state) => (index) => {
+      return state.compositions[index].items.sort((a, b) => {
+        if (!a.parent && b.parent) {
+          return -1;
+        } else if (!b.parent && a.parent) {
+          return 1;
+        } else {
+          return a.level - b.level;
+        }
+      });
     },
   },
 });

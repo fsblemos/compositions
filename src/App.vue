@@ -34,11 +34,46 @@ export default {
       return this.$store.state.compositions;
     },
   },
+  created() {
+    if (!this.compositions.length) {
+      this.$store.commit('addCompositions', [{
+        title: 'Composição logística 1',
+        items: [{
+          dun: 111222333444555,
+          pack: 'CAIXA',
+          amount: 1,
+          children: [
+            {
+              dun: 12345678,
+              pack: 'PACK',
+              amount: 1,
+              children: [
+                {
+                  dun: 789607130086,
+                  pack: 'UNIDADE',
+                  amount: 1,
+                  children: [
+                    { dun: 789607130086123, pack: 'UNIDADE', amount: 1 },
+                  ]
+                },
+              ]
+            },
+          ],
+        }],
+      }, {
+        title: 'Composição logística 2',
+        items: [
+          { dun: 111222333444555123, pack: 'CAIXA', amount: 1 },
+          { dun: 12345678123, pack: 'PACK', amount: 1 },
+          { dun: 78960713008612312, pack: 'UNIDADE', amount: 1 },
+        ]
+      }]);
+    }
+  },
   methods: {
     newComposition() {
       this.$store.commit('addComposition', {
-        title: `Composição logística ${this.compositions.length + 1}`,
-        items: [{ dun: null, pack: null, amount: null, children: [] }],
+        title: `Composição logística ${this.$store.state.counter + 1}`,
       });
     },
   }

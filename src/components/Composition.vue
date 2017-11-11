@@ -11,7 +11,7 @@
       </template>
     </sp-table>
     <sp-modal ref="modal" title="Dados logísticos">
-      <sp-input title="Código DUN" v-model="form.dun"></sp-input>
+      <sp-input title="Código DUN" v-model="form.dun" type="number"></sp-input>
       <sp-select title="Un. Embalagem" :options="packaging" v-model="form.pack"></sp-select>
       <sp-input title="Quantidade" type="number" v-model="form.amount"></sp-input>
       <sp-field v-for="measure in measures" :title="measure.title">
@@ -91,42 +91,61 @@ export default {
   },
   computed: {
     flattedItems() {
-      return this.$store.getters.flattedItems(this.id);
+      return this.$store.getters.items(this.id);
     },
   },
   methods: {
     getActions(row) {
       const defaultActions = ['insert', 'edit'];
-      return row.children ? [...defaultActions, 'remove'] : defaultActions;
+      return row.parent ? defaultActions : [...defaultActions, 'remove'];
     },
     onAction(action, row) {
       if (action === 'insert') {
         this.$refs.modal.open();
         this.form = {};
+        this.child = row;
+        this.edit = false;
       } else if (action === 'edit') {
         this.$refs.modal.open();
         this.form = { ...row };
         this.edit = true;
       } else if (action === 'remove') {
+        this.form = { ...row };
         this.$refs.confirm.open();
       }
     },
     async remove(dun) {
+      this.$store.commit('removeItem', { index: this.id, dun });
+
       try {
         await fakeAjax(dun);
         global.alert('Produto removido com sucesso!');
-        this.$refs.confirm.close();
       } catch (err) {
         global.alert(`${err} - Exemplo de erro ao remover produto, tente novamente.`);
+      } finally {
+        this.$refs.confirm.close();
       }
     },
     save(form) {
-      this.$store.commit(this.edit ? 'setItem' : 'addItem', { index: this.id, item: form });
+      if (this.edit) {
+        this.$store.commit('setItem', { index: this.id, item: form });
+        this.$refs.modal.close();
+      } else {
+        try {
+          this.$store.commit('addParentItem', {
+            index: this.id,
+            item: this.child,
+            parent: form,
+          });
 
-      return fakeAjax(form)
-        .then(() => global.alert('Produto salvo com sucesso!'))
-        .then(this.$refs.modal.close)
-        .catch(err => global.alert(`${err} - Exemplo de erro ao salvar produto, tente novamente.`));
+          fakeAjax(form)
+            .then(() => global.alert('Produto salvo com sucesso!'))
+            .catch(err => global.alert(`${err} - Exemplo de erro ao salvar produto, tente novamente.`))
+            .then(this.$refs.modal.close);
+        } catch (e) {
+          window.alert(e);
+        }
+      }
     },
   },
 };
