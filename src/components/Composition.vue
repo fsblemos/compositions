@@ -66,6 +66,7 @@ export default {
   props: {
     title: String,
     items: Array,
+    id: Number,
   },
   data() {
     return {
@@ -90,12 +91,7 @@ export default {
   },
   computed: {
     flattedItems() {
-      const flatten = (items, level) => items.reduce((prev, cur) => {
-        const item = prev.concat({ ...cur, level });
-        return cur.children ? [...prev, ...item, ...flatten(cur.children, level + 1)] : item;
-      }, []);
-
-      return flatten(this.items, 0);
+      return this.$store.getters.flattedItems(this.id);
     },
   },
   methods: {
@@ -104,9 +100,13 @@ export default {
       return row.children ? [...defaultActions, 'remove'] : defaultActions;
     },
     onAction(action, row) {
-      if (action === 'edit') {
+      if (action === 'insert') {
         this.$refs.modal.open();
-        this.form = row;
+        this.form = {};
+      } else if (action === 'edit') {
+        this.$refs.modal.open();
+        this.form = { ...row };
+        this.edit = true;
       } else if (action === 'remove') {
         this.$refs.confirm.open();
       }
@@ -117,14 +117,16 @@ export default {
         global.alert('Produto removido com sucesso!');
         this.$refs.confirm.close();
       } catch (err) {
-        global.alert(`${err} - Erro ao remover produto`);
+        global.alert(`${err} - Exemplo de erro ao remover produto, tente novamente.`);
       }
     },
     save(form) {
-      fakeAjax(form)
+      this.$store.commit(this.edit ? 'setItem' : 'addItem', { index: this.id, item: form });
+
+      return fakeAjax(form)
         .then(() => global.alert('Produto salvo com sucesso!'))
         .then(this.$refs.modal.close)
-        .catch(err => global.alert(`${err} - Erro ao salvar produto`));
+        .catch(err => global.alert(`${err} - Exemplo de erro ao salvar produto, tente novamente.`));
     },
   },
 };

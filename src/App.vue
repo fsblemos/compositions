@@ -9,10 +9,11 @@
       <sp-composition
         v-for="(composition, index) in compositions"
         :key="index"
+        :id="index"
         :title="composition.title"
         :items="composition.items">
       </sp-composition>
-      <sp-button class="is-warning is-pulled-right" icon="fa-plus">Incluir</sp-button>
+      <sp-button class="is-warning is-pulled-right" icon="fa-plus" @click="newComposition()">Incluir</sp-button>
     </section>
   </div>
 </template>
@@ -28,37 +29,19 @@ export default {
     SpButton,
     SpComposition,
   },
-  data() {
-    return {
-      compositions: [{
-        title: 'Composição logística 1',
-        items: [{
-          dun: '111222333444555',
-          pack: 'CAIXA',
-          amount: 1,
-          children: [
-            { dun: '12345678', pack: 'PACK', amount: 1 },
-            {
-              dun: '789607130086',
-              pack: 'UNIDADE',
-              amount: 1,
-              children: [
-                { dun: '789607130086', pack: 'UNIDADE', amount: 1 },
-                { dun: '789607130086', pack: 'UNIDADE', amount: 1 },
-              ]
-            },
-          ],
-        }],
-      }, {
-        title: 'Composição logística 2',
-        items: [
-          { dun: '111222333444555', pack: 'CAIXA', amount: 1 },
-          { dun: '12345678', pack: 'PACK', amount: 1 },
-          { dun: '789607130086', pack: 'UNIDADE', amount: 1 },
-        ]
-      }],
-    };
+  computed: {
+    compositions() {
+      return this.$store.state.compositions;
+    },
   },
+  methods: {
+    newComposition() {
+      this.$store.commit('addComposition', {
+        title: `Composição logística ${this.compositions.length + 1}`,
+        items: [{ dun: null, pack: null, amount: null, children: [] }],
+      });
+    },
+  }
 };
 </script>
 
