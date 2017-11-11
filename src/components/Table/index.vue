@@ -23,9 +23,9 @@ export default {
     SpTableRow,
   },
   props: {
+    actions: Array,
     columns: Array,
     rows: Array,
-    actions: Array,
   },
 };
 </script>

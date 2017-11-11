@@ -25,8 +25,8 @@ export default {
     SpTableAction,
   },
   props: {
-    row: Object,
     actions: Array,
+    row: Object,
     level: {
       type: Number,
       default: 0,

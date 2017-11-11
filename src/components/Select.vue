@@ -22,12 +22,12 @@ export default {
     SpField,
   },
   props: {
-    value: [String, Number],
+    firstDefault: Boolean,
     options: Array,
-    title: String,
     placeholder: String,
     required: Boolean,
-    firstDefault: Boolean,
+    title: String,
+    value: [String, Number],
   },
   created() {
     debugger;

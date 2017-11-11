@@ -14,8 +14,8 @@
 export default {
   name: 'SpField',
   props: {
-    title: String,
     required: Boolean,
+    title: String,
   },
 };
 </script>

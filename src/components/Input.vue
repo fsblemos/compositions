@@ -23,11 +23,11 @@ export default {
     SpField,
   },
   props: {
-    value: [String, Number],
     placeholder: String,
-    type: String,
-    title: String,
     required: Boolean,
+    title: String,
+    type: String,
+    value: [String, Number],
   },
 };
 </script>

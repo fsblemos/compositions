@@ -56,9 +56,9 @@ export default new Vuex.Store({
       const composition = state.compositions[index];
       const currentItem = composition.items.find(i => i.dun === item.dun);
 
-      if (state.requiredFields.some(field => !parent[field])) {
+      if (state.requiredFields.some(field => !item[field])) {
         throw new Error('Todos os campos são obrigatórios');
-      } else if (composition.items.find(i => i.dun === parent.dun)) {
+      } else if (composition.items.find(i => i.dun === item.dun)) {
         throw new Error('Já existe item com este ID');
       }
 

@@ -64,9 +64,9 @@ export default {
     SpTableRow,
   },
   props: {
-    title: String,
-    items: Array,
     id: Number,
+    items: Array,
+    title: String,
   },
   data() {
     return {

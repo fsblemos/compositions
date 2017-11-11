@@ -17,8 +17,8 @@
 export default {
   name: 'SpHero',
   props: {
-    title: String,
     subtitle: String,
+    title: String,
   },
 };
 </script>
