@@ -14,9 +14,9 @@
       <sp-input title="Código DUN" v-model="form.dun" type="number"></sp-input>
       <sp-select title="Un. Embalagem" :options="packaging" v-model="form.pack"></sp-select>
       <sp-input title="Quantidade" type="number" v-model="form.amount"></sp-input>
-      <sp-field v-for="measure in measures" :title="measure.title">
-        <sp-input type="number" v-model="measure.value"></sp-input>
-        <sp-select :options="units" v-model="measure.unit"></sp-select>
+      <sp-field v-for="measure in measures" :key="measure.key" :title="measure.title">
+        <sp-input type="number" v-model="form[measure.key]"></sp-input>
+        <sp-select :options="units" v-model="form[measure.keyUnit]"></sp-select>
       </sp-field>
       <template slot="footer">
         <sp-button @click="$refs.modal.close()">Cancelar</sp-button>
@@ -70,15 +70,20 @@ export default {
   },
   data() {
     return {
+      actions: [
+        { key: 'insert', onClick: this.onInsert },
+        { key: 'edit', onClick: this.onEdit },
+        { key: 'remove', onClick: this.onRemove },
+      ],
       form: {
         dun: null, pack: null, amount: null,
       },
       measures: [
-        { title: 'Altura', value: null, unit: null },
-        { title: 'Largura', value: null, unit: null },
-        { title: 'Profundidade', value: null, unit: null },
-        { title: 'Peso bruto', value: null, unit: null },
-        { title: 'Peso líquido', value: null, unit: null },
+        { title: 'Altura', key: 'height', keyUnit: 'heightUnit' },
+        { title: 'Largura', key: 'width', keyUnit: 'widthUnit' },
+        { title: 'Profundidade', key: 'depth', keyUnit: 'depthUnit' },
+        { title: 'Peso bruto', key: 'grossWeight', keyUnit: 'grossWeightUnit' },
+        { title: 'Peso líquido', key: 'netWeight', keyUnit: 'netWeightUnit' },
       ],
       units: ['Centímetros', 'Kilogramas', 'Milímetros'],
       packaging: ['CAIXA', 'PACK', 'UNIDADE'],
@@ -88,6 +93,13 @@ export default {
         { index: 'amount', title: 'Quantidade da embalagem' },
       ],
     };
+  },
+  watch: {
+    flattedItems(value) {
+      if (!value || !value.length) {
+        this.$store.commit('removeComposition', this.id);
+      }
+    }
   },
   computed: {
     flattedItems() {
@@ -99,31 +111,32 @@ export default {
       const defaultActions = ['insert', 'edit'];
       return row.parent ? defaultActions : [...defaultActions, 'remove'];
     },
+    onInsert(row) {
+      this.$refs.modal.open();
+      this.form = {};
+      this.child = { ...row };
+      this.edit = false;
+    },
+    onEdit(row) {
+      this.$refs.modal.open();
+      this.form = { ...row };
+      this.edit = true;
+    },
+    onRemove(row) {
+      this.form = { ...row };
+      this.$refs.confirm.open();
+    },
     onAction(action, row) {
-      if (action === 'insert') {
-        this.$refs.modal.open();
-        this.form = {};
-        this.child = row;
-        this.edit = false;
-      } else if (action === 'edit') {
-        this.$refs.modal.open();
-        this.form = { ...row };
-        this.edit = true;
-      } else if (action === 'remove') {
-        this.form = { ...row };
-        this.$refs.confirm.open();
-      }
+      this.actions.find(a => a.key === action).onClick(row);
     },
     async remove(dun) {
       this.$store.commit('removeItem', { index: this.id, dun });
 
       try {
         await fakeAjax(dun);
-        global.alert('Produto removido com sucesso!');
+        global.alert('Registro removido com sucesso!');
       } catch (err) {
         global.alert(`${err} - Exemplo de erro ao remover produto, tente novamente.`);
-      } finally {
-        this.$refs.confirm.close();
       }
     },
     save(form) {
@@ -139,7 +152,7 @@ export default {
           });
 
           fakeAjax(form)
-            .then(() => global.alert('Produto salvo com sucesso!'))
+            .then(() => global.alert('Registro salvo com sucesso!'))
             .catch(err => global.alert(`${err} - Exemplo de erro ao salvar produto, tente novamente.`))
             .then(this.$refs.modal.close);
         } catch (e) {

@@ -11,14 +11,6 @@
       </p>
     </div>
   </sp-field>
-  <!-- <div class="field" :class="{ 'is-horizontal': !!title }">
-    <div class="field-label is-small" v-if="title">
-      <label class="label">{{ title }}</label>
-    </div>
-    <div class="field-body">
-
-    </div>
-  </div> -->
 </template>
 
 <script>

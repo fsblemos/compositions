@@ -27,26 +27,34 @@ export default new Vuex.Store({
     increment(state, amount = 1) {
       state.counter++;
     },
+
+    removeComposition(state, index) {
+      state.compositions.splice(index, 1);
+    },
+
     addComposition(state, composition) {
       if (!composition.items || !composition.items.length) {
-        composition.items = [{ dun: null, pack: null, amount: null, parent: null }];
+        composition.items = [{}];
       }
 
       state.compositions.push({ ...composition, items: flatten(composition.items)});
 
       this.commit('increment');
     },
+
     addCompositions(state, compositions) {
       compositions.forEach(composition => {
         this.commit('addComposition', composition);
       });
     },
+
     setItem(state, { index, item }) {
       const composition = state.compositions[index];
       const currentItem = composition.items.find(i => i.dun === item.dun);
 
       composition.items.splice(composition.items.indexOf(currentItem), 1, item);
     },
+
     removeItem(state, { index, dun }) {
       const composition = state.compositions[index];
       const remove = (dun) => {
@@ -59,11 +67,8 @@ export default new Vuex.Store({
       };
 
       remove(dun);
-
-      if (!composition.items.length) {
-        state.compositions.splice(index, 1);
-      }
     },
+
     addItem(state, { index, item }) {
       const composition = state.compositions[index];
 
@@ -75,6 +80,7 @@ export default new Vuex.Store({
         composition.items.push(item);
       }
     },
+
     addParentItem(state, { index, item, parent }) {
       const composition = state.compositions[index];
 
@@ -107,8 +113,8 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    items: (state) => (index) => {
-      return state.compositions[index].items.sort((a, b) => {
+    items: (state) => (index) =>
+      state.compositions[index].items.sort((a, b) => {
         if (!a.parent && b.parent) {
           return -1;
         } else if (!b.parent && a.parent) {
@@ -116,7 +122,6 @@ export default new Vuex.Store({
         } else {
           return a.level - b.level;
         }
-      });
-    },
+      }),
   },
 });
