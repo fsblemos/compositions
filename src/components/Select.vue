@@ -30,7 +30,6 @@ export default {
     value: [String, Number],
   },
   created() {
-    debugger;
     if (!this.value && this.firstDefault) {
       this.$emit('input', this.options[0]);
     }
