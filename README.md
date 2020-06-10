@@ -1,5 +1,3 @@
-# simplus-dev
-
 > Composição logística
 
 ## Build Setup
